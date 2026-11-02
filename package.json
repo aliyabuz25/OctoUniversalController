@@ -1,6 +1,6 @@
 {
   "name": "octotech-universal-admin",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "description": "Enterprise-grade universal headless admin engine with TypeScript & Node.js",
   "main": "dist/server.js",
   "type": "module",
