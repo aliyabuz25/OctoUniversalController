@@ -6,7 +6,7 @@ All notable changes to the OctoUniversalController system will be documented in 
 ### Əlavə Edildi
 - Sol altda tema rənglərinə uyğun dinamik dairəvi profil şəkli (Circle PFP) və canlı sessiya taymeri (Session Timer).
 - Apple SF Pro şrift ailəsi (-apple-system, SF Pro Display / Text) bütün interfeys elementlərinə tətbiq edildi.
-- GitHub üzərindən canlı versiya yoxlama və məlumatları zədələmədən təhlükəsiz yenilənmə mühərriki.
+- Mərkəzi server üzərindən canlı versiya yoxlama və məlumatları zədələmədən təhlükəsiz yenilənmə mühərriki.
 - Session lock ekranı və təhlükəsiz çıxış (logout) mexanizmi.
 
 ### Təkmilləşdirmələr

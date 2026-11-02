@@ -171,7 +171,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         setUpdateLogs(data.data.logs || [
           '[1/5] Məlumat bazası təhlükəsizlik rejimində qorundu.',
           '[2/5] SQLite backup yaradıldı.',
-          '[3/5] GitHub v2.4.2 paketləri gətirildi.',
+          '[3/5] Rəsmi versiya paketləri gətirildi.',
           '[4/5] İstehsalat qurulması icra edildi.',
           '[5/5] Sistem uğurla yeniləndi!'
         ]);
@@ -426,7 +426,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </div>
       </div>
 
-      {/* Software Version & GitHub Safe Update Card: Flat & Sharp */}
+      {/* Software Version & Safe Update Card: Flat & Sharp */}
       <div className="bg-white dark:bg-slate-900 p-5 rounded-none border border-slate-300 dark:border-slate-800 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div className="flex items-start gap-3">
@@ -436,7 +436,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                  Sistem Versiyası & GitHub Yeniləməsi
+                  Sistem Versiyası & Proqram Təminatı Yeniləməsi
                 </h3>
                 <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-none border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
                   v{currentVersion}
@@ -446,7 +446,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Sistemi və məlumatları zədələmədən GitHub üzərindən avtomatik yoxlama və qorunan yeniləmə.
+                Sistemi və məlumatları zədələmədən rəsmi mərkəz üzərindən avtomatik yoxlama və qorunan yeniləmə.
               </p>
             </div>
           </div>
@@ -487,21 +487,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
 
           <div className="p-2.5 rounded-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-            <span className="block text-[9.5px] uppercase text-slate-400">Mənbə / Repo</span>
-            <a 
-              href="https://github.com/aliyabuz25/OctoUniversalController" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="font-bold text-slate-900 dark:text-white truncate block hover:underline"
-              title="GitHub Repozitoriyası"
-            >
-              OctoUniversalController
-            </a>
+            <span className="block text-[9.5px] uppercase text-slate-400">Rəsmi Mənbə</span>
+            <span className="font-bold text-slate-900 dark:text-white truncate block">
+              OctoUniversalCore
+            </span>
           </div>
 
           <div className="p-2.5 rounded-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
             <span className="block text-[9.5px] uppercase text-slate-400">Budaq</span>
-            <span className="font-bold text-slate-900 dark:text-white">main</span>
+            <span className="font-bold text-slate-900 dark:text-white">main (rəsmi)</span>
           </div>
 
           <div className="p-2.5 rounded-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -532,7 +526,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 className="h-8 px-4 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 text-white rounded-none text-xs font-semibold uppercase tracking-wider flex items-center gap-2 transition-colors cursor-pointer shrink-0 disabled:opacity-60"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>{isUpdating ? 'Yenilənir...' : 'Sistemi Bozmadan Yenilə (GitHub)'}</span>
+                <span>{isUpdating ? 'Yenilənir...' : 'Sistemi Bozmadan Yenilə'}</span>
               </button>
             </div>
 
@@ -562,7 +556,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         {updateData && !updateData.hasUpdate && (
           <div className="p-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center gap-2 text-xs text-slate-800 dark:text-slate-200">
             <CheckCircle2 className="w-4 h-4 text-slate-700 dark:text-slate-300 shrink-0" />
-            <span>Sistem ən son versiyadadır (v{currentVersion}). GitHub üzərində heç bir yeni yeniləmə yoxdur.</span>
+            <span>Sistem ən son versiyadadır (v{currentVersion}). Rəsmi mərkəzdə heç bir yeni yeniləmə yoxdur.</span>
           </div>
         )}
 
@@ -571,7 +565,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="p-3 bg-slate-900 text-slate-100 font-mono text-[11px] space-y-1 rounded-none border border-slate-800">
             <div className="flex items-center gap-1.5 text-slate-400 pb-1 border-b border-slate-800 text-[10px] uppercase tracking-wider">
               <Terminal className="w-3 h-3" />
-              <span>GitHub Təhlükəsiz Yeniləmə Jurnalı</span>
+              <span>Sistem Təhlükəsiz Yeniləmə Jurnalı</span>
             </div>
             {updateLogs.map((log, idx) => (
               <div key={idx} className="leading-relaxed">

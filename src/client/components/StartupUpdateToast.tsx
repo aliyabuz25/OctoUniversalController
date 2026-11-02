@@ -29,7 +29,7 @@ interface UpdateData {
 const TOAST_I18N = {
   az: {
     checking: 'Yeniləmələr yoxlanılır...',
-    checkingSub: 'GitHub versiyası və sistem təhlükəsizliyi yoxlanılır (3s)',
+    checkingSub: 'Rəsmi versiya və sistem təhlükəsizliyi yoxlanılır (3s)',
     upToDate: 'Sistem Tam Güncəldir',
     upToDateSub: (v: string) => `v${v} • Ən son rəsmi versiyadasınız`,
     updateAvailable: 'Yeniləmə Mövcuddur',
@@ -46,7 +46,7 @@ const TOAST_I18N = {
   },
   tr: {
     checking: 'Güncellemeler denetleniyor...',
-    checkingSub: 'GitHub sürümü ve sistem güvenliği kontrol ediliyor (3s)',
+    checkingSub: 'Resmi sürüm ve sistem güvenliği kontrol ediliyor (3s)',
     upToDate: 'Sistem Tamamen Güncel',
     upToDateSub: (v: string) => `v${v} • En son resmi sürümü kullanıyorsunuz`,
     updateAvailable: 'Yeni Güncelleme Mevcut',
@@ -63,7 +63,7 @@ const TOAST_I18N = {
   },
   ru: {
     checking: 'Проверка обновлений...',
-    checkingSub: 'Сверка версии с GitHub и проверка безопасности (3с)',
+    checkingSub: 'Сверка версии с официальным сервером (3с)',
     upToDate: 'Система обновлена',
     upToDateSub: (v: string) => `v${v} • Установлена последняя официальная версия`,
     updateAvailable: 'Доступно обновление',
@@ -80,7 +80,7 @@ const TOAST_I18N = {
   },
   en: {
     checking: 'Checking for updates...',
-    checkingSub: 'Verifying GitHub release and system integrity (3s)',
+    checkingSub: 'Verifying official release and system integrity (3s)',
     upToDate: 'System is Up to Date',
     upToDateSub: (v: string) => `v${v} • You are running the latest official release`,
     updateAvailable: 'New Update Available',

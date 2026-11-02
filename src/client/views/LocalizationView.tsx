@@ -5,7 +5,6 @@ import {
   Search, 
   Download, 
   Plus, 
-  Sparkles, 
   Check, 
   Layers, 
   FileText, 

@@ -366,7 +366,7 @@ async function fetchGithubChangelogAndVersion(): Promise<{ latestVersion: string
   let releaseNotes: string[] = [
     'Sol altda tema rənglərinə uyğun dinamik dairəvi profil şəkli (Circle PFP) və canlı sessiya taymeri (Session Timer).',
     'Apple SF Pro şrift ailəsi (-apple-system, SF Pro Display / Text) bütün interfeys elementlərinə tətbiq edildi.',
-    'GitHub üzərindən canlı versiya yoxlama və məlumatları zədələmədən təhlükəsiz yenilənmə mühərriki.',
+    'Mərkəzi server üzərindən canlı versiya yoxlama və məlumatları zədələmədən təhlükəsiz yenilənmə mühərriki.',
     'Canlı qrafikdən süni "Live Stream (CDN Edge)" yazısı ləğv edildi və bütün statistika 100% real bazaya bağlandı.',
     'SQLite 3 tam backup və Adminer self-healing avtomatik bərpa mexanizmi gücləndirildi.'
   ];
@@ -406,7 +406,7 @@ async function fetchGithubChangelogAndVersion(): Promise<{ latestVersion: string
             inTargetSection = true;
           }
         } else if (inTargetSection && trimmed.startsWith('- ')) {
-          parsedNotes.push(trimmed.replace(/^- /, ''));
+          parsedNotes.push(trimmed.replace(/^- /, '').replace(/github/gi, 'Mərkəzi Server'));
         }
       }
 
@@ -416,8 +416,10 @@ async function fetchGithubChangelogAndVersion(): Promise<{ latestVersion: string
     }
     clearTimeout(timeout);
   } catch (err: any) {
-    console.warn('[Updater] GitHub fetch fallback:', err.message);
+    console.warn('[Updater] Fetch fallback:', err.message);
   }
+
+  releaseNotes = releaseNotes.map(n => n.replace(/github/gi, 'Mərkəzi Server'));
 
   return { latestVersion, releaseNotes };
 }
@@ -429,7 +431,7 @@ app.get('/api/system/version', (_req: Request, res: Response) => {
     data: {
       version,
       name: 'Octotech LL. Admin Engine',
-      repository: GITHUB_REPO_URL,
+      repository: 'OctoUniversalController Core (Rəsmi)',
       branch: 'main',
       environment: process.env.NODE_ENV || 'production'
     }
@@ -450,10 +452,10 @@ app.get('/api/system/update/check', async (_req: Request, res: Response) => {
       currentVersion,
       latestVersion,
       hasUpdate,
-      releaseName: hasUpdate ? `Octotech LL. Core ${latestVersion} (GitHub Release)` : 'Son Stabil Versiya',
+      releaseName: hasUpdate ? `Octotech LL. Core ${latestVersion} (Rəsmi Buraxılış)` : 'Son Stabil Versiya',
       publishedAt: '2026-11-02T12:00:00Z',
       commitHash: '8f4a1c9',
-      repository: GITHUB_REPO_URL,
+      repository: 'OctoUniversalController Core (Rəsmi)',
       releaseNotes,
       checkDurationSeconds: 3
     }
@@ -469,8 +471,8 @@ app.post('/api/system/update/apply', async (_req: Request, res: Response) => {
     const backupPath = SqliteBackupManager.exportToSqlite();
     logs.push(`[2/5] SQLite tam sistem nüsxəsi təhlükəsizlik arxivinə qeyd edildi (${path.basename(backupPath)}).`);
 
-    // 2. GitHub update check
-    logs.push(`[3/5] GitHub repozitoriyasından (${GITHUB_REPO}) ən son versiya paketləri gətirilir...`);
+    // 2. Official server update check
+    logs.push('[3/5] Mərkəzi serverdən ən son rəsmi versiya paketləri gətirilir...');
 
     // 3. Update package.json version
     const { latestVersion } = await fetchGithubChangelogAndVersion();

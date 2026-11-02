@@ -55,7 +55,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     { type: 'nav', id: 'media', title: t['nav.media'] || 'Media Mərkəzi', icon: ImageIcon, subtitle: 'Fayl və şəkillər' },
     { type: 'nav', id: 'localization', title: t['nav.localization'] || 'Lokalizasiya & Dillər', icon: Globe, subtitle: 'Tərcümələr' },
     { type: 'nav', id: 'settings', title: t['nav.settings'] || 'Sistem Parametrləri', icon: Settings, subtitle: 'Backup və konfiqurasiya' },
-    { type: 'nav', id: 'settings', title: 'GitHub Versiya Yeniləməsi', icon: GitBranch, subtitle: 'v2.4 yoxla və qorunan yeniləmə et' },
+    { type: 'nav', id: 'settings', title: 'Sistem Versiya Yeniləməsi', icon: GitBranch, subtitle: 'v2.4 yoxla və qorunan yeniləmə et' },
   ];
 
   const themeItems: PaletteItem[] = COLOR_THEMES.map(theme => ({

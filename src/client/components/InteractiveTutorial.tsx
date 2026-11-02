@@ -85,9 +85,9 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'theme',
     badge: 'Mərhələ 05 / 06',
-    title: '8 Rəng Teması & Qorunan GitHub Yeniləməsi',
+    title: '8 Rəng Teması & Təhlükəsiz Sistem Yeniləməsi',
     subtitle: 'Fərdi vizual üslublar, SQLite backup və atomik yeniləmə',
-    description: 'Yuxarıdakı "Tema" menyusundan 8 yüksək keyfiyyətli flat rəng sxemindən birini (Nordic, Emerald, Cyber, Obsidian, Amber və s.) seçə bilərsiniz. Bütün saytın tam nüsxəsini tək kliklə .sqlite formatında endirə və GitHub-dan qorunan rejimdə sistemi yeniləyə bilərsiniz.',
+    description: 'Yuxarıdakı "Tema" menyusundan 8 yüksək keyfiyyətli flat rəng sxemindən birini (Nordic, Emerald, Cyber, Obsidian, Amber və s.) seçə bilərsiniz. Bütün saytın tam nüsxəsini tək kliklə .sqlite formatında endirə və rəsmi mərkəzdən qorunan rejimdə sistemi yeniləyə bilərsiniz.',
     highlight: 'Yenilənmələr zamanı mövcud məlumat bazası və fayllar 100% toxunulmaz qalır.',
     icon: Palette,
     tag: 'Temalar & Yeniləmə',

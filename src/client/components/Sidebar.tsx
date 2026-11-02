@@ -242,7 +242,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="h-6 px-3 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400 hover:text-slate-700 bg-slate-50/50 cursor-pointer transition-colors"
           >
             <span className="font-medium tracking-tight">Core v2.4.2</span>
-            <span className="font-mono text-[9px] uppercase">GitHub</span>
+            <span className="font-mono text-[9px] uppercase">RƏSMİ</span>
           </div>
         </div>
       ) : (
