@@ -20,6 +20,7 @@ import { FloatingFlagSelector } from './components/FloatingFlagSelector';
 import { CommandPalette } from './components/CommandPalette';
 import { ThemeSelectorModal } from './components/ThemeSelectorModal';
 import { InteractiveTutorial } from './components/InteractiveTutorial';
+import { StartupUpdateToast } from './components/StartupUpdateToast';
 
 import { DashboardView } from './views/DashboardView';
 import { SeoManagerView } from './views/SeoManagerView';
@@ -570,6 +571,15 @@ export const App: React.FC = () => {
         isOpen={tutorialOpen}
         onClose={() => setTutorialOpen(false)}
         uiLang={uiLang}
+      />
+
+      {/* Startup Bottom-Right Update / Up-to-Date Toast */}
+      <StartupUpdateToast
+        uiLang={uiLang}
+        onOpenSettings={() => openTab('settings', t['nav.settings'] || 'Sistem Parametrləri', 'settings')}
+        onUpdateCompleted={(newVer) => {
+          showToast(`Sistem v${newVer} versiyasına uğurla yeniləndi!`);
+        }}
       />
 
       {/* Fullscreen Onboarding Card Deck Wizard */}
