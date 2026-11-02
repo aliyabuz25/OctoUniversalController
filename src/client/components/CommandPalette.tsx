@@ -10,7 +10,8 @@ import {
   Palette,
   Moon,
   Sun,
-  GitBranch
+  GitBranch,
+  Compass
 } from 'lucide-react';
 import { UiLanguage } from '../types';
 import { DICTIONARIES } from '../i18n';
@@ -22,6 +23,7 @@ interface CommandPaletteProps {
   onSelectTab: (id: string, title: string, icon: string) => void;
   onSelectTheme?: (themeId: string) => void;
   onOpenThemes?: () => void;
+  onOpenTutorial?: () => void;
   uiLang: UiLanguage;
 }
 
@@ -31,13 +33,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onSelectTab,
   onSelectTheme,
   onOpenThemes,
+  onOpenTutorial,
   uiLang
 }) => {
   const [query, setQuery] = useState('');
   const t = DICTIONARIES[uiLang] || DICTIONARIES.az;
 
   interface PaletteItem {
-    type: 'nav' | 'theme' | 'theme_modal';
+    type: 'nav' | 'theme' | 'theme_modal' | 'tutorial';
     id: string;
     title: string;
     subtitle?: string;
@@ -65,8 +68,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   }));
 
   const allItems: PaletteItem[] = [
+    { type: 'tutorial', id: 'tutorial', title: 'Sistem Bələdçisi (Tutorial)', subtitle: '6 mərhələli interaktiv sistem bələdçisini aç', icon: Compass },
     ...navItems,
-    { type: 'theme_modal', id: 'theme_modal', title: 'Palitra: Rəng Temaları Qalereyası', subtitle: 'Bütün 6 temaya vizual baxış və seçim', icon: Palette },
+    { type: 'theme_modal', id: 'theme_modal', title: 'Palitra: Rəng Temaları Qalereyası', subtitle: 'Bütün 8 temaya vizual baxış və seçim', icon: Palette },
     ...themeItems
   ];
 
@@ -133,7 +137,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 <button
                   key={`${item.type}-${item.id}`}
                   onClick={() => {
-                    if (item.type === 'nav') {
+                    if (item.type === 'tutorial') {
+                      if (onOpenTutorial) onOpenTutorial();
+                    } else if (item.type === 'nav') {
                       onSelectTab(item.id, item.title, item.id);
                     } else if (item.type === 'theme' && onSelectTheme) {
                       onSelectTheme(item.id);

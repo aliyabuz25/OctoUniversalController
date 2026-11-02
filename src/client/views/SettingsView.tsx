@@ -20,7 +20,8 @@ import {
   ArrowUpCircle,
   Terminal,
   Clock,
-  ShieldCheck
+  ShieldCheck,
+  Compass
 } from 'lucide-react';
 import { SiteConfig, MulterConfig, UiLanguage } from '../types';
 import { COLOR_THEMES, ColorTheme } from '../theme';
@@ -31,6 +32,7 @@ interface SettingsViewProps {
   onSaveSite: (site: SiteConfig) => Promise<void>;
   onSaveMulter: (multer: MulterConfig) => Promise<void>;
   onRerunWizard: () => void;
+  onOpenTutorial?: () => void;
   uiLang: UiLanguage;
   currentTheme: string;
   onSelectTheme: (themeId: string) => void;
@@ -42,6 +44,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onSaveSite,
   onSaveMulter,
   onRerunWizard,
+  onOpenTutorial,
   uiLang,
   currentTheme,
   onSelectTheme
@@ -788,6 +791,26 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             </div>
           </form>
         </div>
+      </div>
+
+      {/* Interactive System Tutorial Card: Flat & Sharp */}
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-none border border-slate-300 dark:border-slate-800 flex items-center justify-between">
+        <div>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+            <Compass className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+            <span>Sistem Bələdçisi (Tutorial)</span>
+          </h4>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Admin panelinin 6 əsas mərhələsini izah edən interaktiv bələdçi turunu istənilən vaxt yenidən başladın.
+          </p>
+        </div>
+        <button
+          onClick={onOpenTutorial}
+          className="h-8 px-3 rounded-none border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <Compass className="w-3.5 h-3.5" />
+          <span>Bələdçini Başlat</span>
+        </button>
       </div>
 
       {/* Rerun Setup Wizard Card: Flat & Sharp */}

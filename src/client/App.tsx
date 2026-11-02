@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Database, Download, Palette } from 'lucide-react';
+import { Search, Database, Download, Palette, Compass } from 'lucide-react';
 import { 
   UiLanguage, 
   TabItem, 
@@ -19,6 +19,7 @@ import { OnboardingWizard } from './components/OnboardingWizard';
 import { FloatingFlagSelector } from './components/FloatingFlagSelector';
 import { CommandPalette } from './components/CommandPalette';
 import { ThemeSelectorModal } from './components/ThemeSelectorModal';
+import { InteractiveTutorial } from './components/InteractiveTutorial';
 
 import { DashboardView } from './views/DashboardView';
 import { SeoManagerView } from './views/SeoManagerView';
@@ -59,6 +60,9 @@ export const App: React.FC = () => {
   // Theme state
   const [currentTheme, setCurrentTheme] = useState<string>(getInitialTheme);
   const [themeModalOpen, setThemeModalOpen] = useState(false);
+
+  // Azerbaijani Interactive Tutorial state (first visit auto-detect)
+  const [tutorialOpen, setTutorialOpen] = useState(false);
 
   // Data states
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
@@ -112,6 +116,19 @@ export const App: React.FC = () => {
   useEffect(() => {
     applyTheme(currentTheme);
   }, [currentTheme]);
+
+  // First visit check: auto-launch Azerbaijani interactive tutorial
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const completed = localStorage.getItem('octotech_tutorial_completed');
+      if (!completed) {
+        const timer = setTimeout(() => {
+          setTutorialOpen(true);
+        }, 350);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, []);
 
   const handleSelectTheme = (themeId: string) => {
     setCurrentTheme(themeId);
@@ -431,6 +448,16 @@ export const App: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Azerbaijani Interactive Tutorial Button */}
+            <button
+              onClick={() => setTutorialOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-none border border-slate-300 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              title="Sistem Bələdçisi (Tutorial) - 6 mərhələli bələdçi turu"
+            >
+              <Compass className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+              <span>Bələdçi</span>
+            </button>
+
             {/* Theme Selector Top Bar Button - Flat & Sharp */}
             <button
               onClick={() => setThemeModalOpen(true)}
@@ -506,6 +533,7 @@ export const App: React.FC = () => {
               onSaveSite={handleSaveSite}
               onSaveMulter={handleSaveMulter}
               onRerunWizard={() => setWizardOpen(true)}
+              onOpenTutorial={() => setTutorialOpen(true)}
               uiLang={uiLang}
               currentTheme={currentTheme}
               onSelectTheme={handleSelectTheme}
@@ -524,6 +552,7 @@ export const App: React.FC = () => {
         onSelectTab={openTab}
         onSelectTheme={handleSelectTheme}
         onOpenThemes={() => setThemeModalOpen(true)}
+        onOpenTutorial={() => setTutorialOpen(true)}
         uiLang={uiLang}
       />
 
@@ -533,6 +562,13 @@ export const App: React.FC = () => {
         onClose={() => setThemeModalOpen(false)}
         currentTheme={currentTheme}
         onSelectTheme={handleSelectTheme}
+        uiLang={uiLang}
+      />
+
+      {/* Azerbaijani Interactive Step-by-Step Tutorial */}
+      <InteractiveTutorial
+        isOpen={tutorialOpen}
+        onClose={() => setTutorialOpen(false)}
         uiLang={uiLang}
       />
 
