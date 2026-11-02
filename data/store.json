@@ -1,0 +1,155 @@
+{
+  "site": {
+    "name": "New site",
+    "domain": "http://localhost:3000",
+    "type": "Supabase / PostgreSQL",
+    "endpoint": "http://localhost:3000/api/v1"
+  },
+  "seo": {
+    "title": "Octotech LL. | Rəsmi Satış və Zəmanət Mərkəzi",
+    "description": "Ən son texnologiya, premium elektronika və eksklüziv aksesuarları rəsmi zəmanətlə əldə edin. Sürətli çatdırılma və təhlükəsiz ödəniş.",
+    "canonical": "http://localhost:3000",
+    "keywords": "elektronika, onlayn mağaza, smartfonlar, rəsmi zəmanət, bakı çatdırılma",
+    "robotsIndex": true,
+    "robotsFollow": true,
+    "ogTitle": "Octotech LL. - Rəsmi Mağaza",
+    "ogDescription": "Premium məhsullar və xüsusi endirimlər sizi gözləyir.",
+    "ogImage": "https://mystore.az/assets/og-cover.jpg",
+    "sitemapUrl": "https://mystore.az/sitemap.xml",
+    "lastUpdated": "2026-11-02T11:45:00Z"
+  },
+  "translations": [
+    {
+      "key": "nav.home",
+      "module": "common",
+      "type": "text",
+      "az": "Ana Səhifə",
+      "tr": "Ana Sayfa",
+      "ru": "Главная",
+      "en": "Home"
+    },
+    {
+      "key": "nav.products",
+      "module": "common",
+      "type": "text",
+      "az": "Məhsullarımız",
+      "tr": "Ürünlerimiz",
+      "ru": "Продукты",
+      "en": "Products"
+    },
+    {
+      "key": "hero.title",
+      "module": "marketing",
+      "type": "rich",
+      "az": "Gələcəyin E-Ticarət Təcrübəsi və Yeni Nəsil Həllər",
+      "tr": "Geleceğin E-Ticaret Deneyimi ve Yeni Nesil Çözümler",
+      "ru": "Будущее электронной коммерции и решений нового поколения",
+      "en": "The Future of E-Commerce & Next-Gen Solutions"
+    },
+    {
+      "key": "hero.cta",
+      "module": "marketing",
+      "type": "text",
+      "az": "İndi Başlayın",
+      "tr": "Hemen Başlayın",
+      "ru": "Начать сейчас",
+      "en": "Get Started Today"
+    },
+    {
+      "key": "product.card.stock",
+      "module": "products",
+      "type": "text",
+      "az": "Stokda {{count}} ədəd qalıb",
+      "tr": "Stokta {{count}} adet kaldı",
+      "ru": "Осталось на складе: {{count}} шт.",
+      "en": "Only {{count}} items left in stock"
+    },
+    {
+      "key": "checkout.pay",
+      "module": "checkout",
+      "type": "text",
+      "az": "Ödənişi Tamamla",
+      "tr": "Ödemeyi Tamamla",
+      "ru": "Завершить оплату",
+      "en": "Complete Payment"
+    },
+    {
+      "key": "checkout.delivery_note",
+      "module": "checkout",
+      "type": "rich",
+      "az": "Sifarişiniz kuryer tərəfindən 24 saat ərzində çatdırılacaqdır. Çatdırılma zamanı kartla və ya nağd ödəniş mümkündür.",
+      "tr": "Siparişiniz kurye tarafından 24 saat içinde teslim edilecektir. Teslimat sırasında kartla veya nakit ödeme yapabilirsiniz.",
+      "ru": "Ваш заказ будет доставлен курьером в течение 24 часов. Возможна оплата картой или наличными при получении.",
+      "en": "Your order will be delivered by courier within 24 hours. Card or cash on delivery is available."
+    },
+    {
+      "key": "system.error.timeout",
+      "module": "system",
+      "type": "text",
+      "az": "Sorğu vaxtı bitdi. Zəhmət olmasa yenidən cəhd edin.",
+      "tr": "İstek zaman aşımına uğradı. Lütfen tekrar deneyin.",
+      "ru": "Время ожидания запроса истекло. Пожалуйста, повторите попытку.",
+      "en": "Request timed out. Please try again."
+    }
+  ],
+  "records": [
+    {
+      "title": "Stabilizasiya Test Qeydi",
+      "source": "Direct API",
+      "author": "Admin",
+      "date": "İndi",
+      "status": "published",
+      "id": "REC-8627"
+    },
+    {
+      "id": "REC-1094",
+      "title": "Ana Səhifə Banner Yenilənməsi",
+      "source": "Next.js Headless",
+      "author": "Nigar Əliyeva",
+      "date": "10 dəqiqə əvvəl",
+      "status": "published"
+    },
+    {
+      "id": "REC-1093",
+      "title": "Məhsul Qalıqlarının Sinxronizasiyası (142 ədəd)",
+      "source": "Shopify Sync",
+      "author": "Sistem Botu",
+      "date": "35 dəqiqə əvvəl",
+      "status": "synced"
+    },
+    {
+      "id": "REC-1092",
+      "title": "İstifadəçi Qaydaları və Şərtlər v2.4",
+      "source": "WordPress CMS",
+      "author": "Hüquq Şöbəsi",
+      "date": "2 saat əvvəl",
+      "status": "published"
+    },
+    {
+      "id": "REC-1091",
+      "title": "Black Friday Kampaniyası Layihəsi",
+      "source": "Supabase DB",
+      "author": "Rəşad Quliyev",
+      "date": "Dünən, 18:20",
+      "status": "draft"
+    }
+  ],
+  "media": [],
+  "uploadConfig": {
+    "maxFileSizeMB": 25,
+    "allowedMimeTypes": "image/jpeg,image/png,image/webp,image/svg+xml,application/pdf",
+    "uploadDir": "uploads"
+  },
+  "admin": {
+    "fullName": "Ali Yabuz",
+    "email": "aliyabuz@site.com",
+    "role": "Super Admin (Tam Səlahiyyət)",
+    "password": "12345678"
+  },
+  "setup": {
+    "completed": true,
+    "industry": "Xəbər & Media Platforması",
+    "setupDate": "2026-11-02T10:17:37.816Z"
+  },
+  "version": "2.4.0"
+}
