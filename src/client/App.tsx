@@ -21,6 +21,7 @@ import { CommandPalette } from './components/CommandPalette';
 import { ThemeSelectorModal } from './components/ThemeSelectorModal';
 import { InteractiveTutorial } from './components/InteractiveTutorial';
 import { StartupUpdateToast } from './components/StartupUpdateToast';
+import { FullscreenLogin } from './components/FullscreenLogin';
 
 import { DashboardView } from './views/DashboardView';
 import { SeoManagerView } from './views/SeoManagerView';
@@ -32,6 +33,7 @@ import { SettingsView } from './views/SettingsView';
 const LANG_STORAGE_KEY = 'octotech_admin_lang';
 const SIDEBAR_STORAGE_KEY = 'octotech_admin_sidebar_collapsed';
 const TAB_STORAGE_KEY = 'octotech_admin_active_tab';
+const JWT_STORAGE_KEY = 'octotech_admin_jwt';
 
 const getInitialLang = (): UiLanguage => {
   if (typeof window === 'undefined') return 'az';
@@ -65,6 +67,14 @@ export const App: React.FC = () => {
   // Azerbaijani Interactive Tutorial state (first visit auto-detect)
   const [tutorialOpen, setTutorialOpen] = useState(false);
 
+  // Authentication & 10-Minute JWT Session State
+  const [token, setToken] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem(JWT_STORAGE_KEY);
+  });
+  const [authChecking, setAuthChecking] = useState<boolean>(true);
+  const [sessionRemaining, setSessionRemaining] = useState<number>(600);
+
   // Data states
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [seo, setSeo] = useState<SeoConfig>({
@@ -89,14 +99,12 @@ export const App: React.FC = () => {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Admin user & Session lock state
+  // Admin user
   const [adminUser, setAdminUser] = useState<{ fullName: string; email: string; role?: string }>({
     fullName: 'Admin',
     email: 'admin@octotech.az',
     role: 'Super Admin'
   });
-  const [isLocked, setIsLocked] = useState<boolean>(false);
-  const [lockPassword, setLockPassword] = useState<string>('');
 
   const t = DICTIONARIES[uiLang] || DICTIONARIES.az;
 
@@ -156,52 +164,147 @@ export const App: React.FC = () => {
   }, [uiLang]);
 
   // Initial Data Fetch
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Check setup status
-        const setupRes = await fetch('/api/setup');
-        const setupData = await setupRes.json();
-        if (setupData.success) {
-          if (!setupData.data.setup?.completed) {
-            setWizardOpen(true);
-          }
-          if (setupData.data.site) setSiteConfig(setupData.data.site);
-          if (setupData.data.uploadConfig) setMulterConfig(setupData.data.uploadConfig);
-          if (setupData.data.admin) setAdminUser(setupData.data.admin);
+  const fetchData = async () => {
+    try {
+      // Check setup status
+      const setupRes = await fetch('/api/setup');
+      const setupData = await setupRes.json();
+      if (setupData.success) {
+        if (!setupData.data.setup?.completed) {
+          setWizardOpen(true);
         }
+        if (setupData.data.site) setSiteConfig(setupData.data.site);
+        if (setupData.data.uploadConfig) setMulterConfig(setupData.data.uploadConfig);
+        if (setupData.data.admin) setAdminUser(setupData.data.admin);
+      }
 
-        // Fetch SEO
-        const seoRes = await fetch('/api/seo');
-        const seoData = await seoRes.json();
-        if (seoData.success && seoData.data) setSeo(seoData.data);
+      // Fetch SEO
+      const seoRes = await fetch('/api/seo');
+      const seoData = await seoRes.json();
+      if (seoData.success && seoData.data) setSeo(seoData.data);
 
-        // Fetch Translations
-        const transRes = await fetch('/api/translations');
-        const transData = await transRes.json();
-        if (transData.success && transData.data) setTranslations(transData.data);
+      // Fetch Translations
+      const transRes = await fetch('/api/translations');
+      const transData = await transRes.json();
+      if (transData.success && transData.data) setTranslations(transData.data);
 
-        // Fetch Records
-        const recRes = await fetch('/api/records');
-        const recData = await recRes.json();
-        if (recData.success && recData.data) setRecords(recData.data);
+      // Fetch Records
+      const recRes = await fetch('/api/records');
+      const recData = await recRes.json();
+      if (recData.success && recData.data) setRecords(recData.data);
 
-        // Fetch Media
-        const mediaRes = await fetch('/api/media');
-        const mediaData = await mediaRes.json();
-        if (mediaData.success && mediaData.data) setMedia(mediaData.data);
+      // Fetch Media
+      const mediaRes = await fetch('/api/media');
+      const mediaData = await mediaRes.json();
+      if (mediaData.success && mediaData.data) setMedia(mediaData.data);
 
-        // Fetch Upload Config
-        const upRes = await fetch('/api/settings/upload');
-        const upData = await upRes.json();
-        if (upData.success && upData.data) setMulterConfig(upData.data);
-      } catch (err) {
-        console.error('Initial data fetch error:', err);
+      // Fetch Upload Config
+      const upRes = await fetch('/api/settings/upload');
+      const upData = await upRes.json();
+      if (upData.success && upData.data) setMulterConfig(upData.data);
+    } catch (err) {
+      console.error('Initial data fetch error:', err);
+    }
+  };
+
+  // Verify JWT on app initialization (Non-Bypassable)
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const savedToken = typeof window !== 'undefined' ? localStorage.getItem(JWT_STORAGE_KEY) : null;
+      if (!savedToken) {
+        setToken(null);
+        setAuthChecking(false);
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${savedToken}` }
+        });
+        const data = await res.json();
+        if (res.ok && data.success && data.data?.user) {
+          setToken(savedToken);
+          setAdminUser({
+            fullName: data.data.user.fullName || data.data.user.username || 'Admin',
+            email: data.data.user.email || 'admin@octotech.az',
+            role: data.data.user.role || 'Super Admin'
+          });
+          setSessionRemaining(data.data.remainingSeconds || 600);
+          fetchData();
+        } else {
+          localStorage.removeItem(JWT_STORAGE_KEY);
+          setToken(null);
+        }
+      } catch {
+        localStorage.removeItem(JWT_STORAGE_KEY);
+        setToken(null);
+      } finally {
+        setAuthChecking(false);
       }
     };
 
-    fetchData();
+    verifyAuth();
   }, []);
+
+  // Real-time 10-Minute Session Countdown (600 seconds)
+  useEffect(() => {
+    if (!token) return;
+    const timer = setInterval(() => {
+      setSessionRemaining(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleLogout('Sessiyanın müddəti (10 dəqiqə) bitmişdir. Zəhmət olmasa yenidən daxil olun.');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [token]);
+
+  const handleLoginSuccess = (newToken: string, user: any, expiresIn: number) => {
+    localStorage.setItem(JWT_STORAGE_KEY, newToken);
+    setToken(newToken);
+    setSessionRemaining(expiresIn || 600);
+    if (user) {
+      setAdminUser({
+        fullName: user.fullName || user.username || 'Admin',
+        email: user.email || 'admin@octotech.az',
+        role: user.role || 'Super Admin'
+      });
+    }
+    fetchData();
+    showToast('Uğurla daxil oldunuz! 10 dəqiqəlik sessiya başladı.');
+  };
+
+  const handleLogout = async (msg?: string) => {
+    if (token) {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      } catch {
+        // ignore
+      }
+    }
+    localStorage.removeItem(JWT_STORAGE_KEY);
+    setToken(null);
+    setSessionRemaining(600);
+    showToast(msg || 'Sessiya təhlükəsiz şəkildə sonlandırıldı');
+  };
+
+  const getAuthHeaders = (extra: Record<string, string> = {}) => {
+    const headers: Record<string, string> = { ...extra };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  };
+
+  const handleUnauthorized = () => {
+    handleLogout('Sessiyanın müddəti (10 dəqiqə) bitmişdir. Zəhmət olmasa yenidən daxil olun.');
+  };
 
   // Keyboard shortcut Cmd+K
   useEffect(() => {
@@ -257,9 +360,10 @@ export const App: React.FC = () => {
     try {
       const res = await fetch('/api/seo', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updatedSeo)
       });
+      if (res.status === 401) return handleUnauthorized();
       const data = await res.json();
       if (data.success) {
         setSeo(data.data);
@@ -274,9 +378,10 @@ export const App: React.FC = () => {
     try {
       const res = await fetch('/api/translations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(item)
       });
+      if (res.status === 401) return handleUnauthorized();
       const data = await res.json();
       if (data.success) {
         setTranslations(prev => prev.map(t => t.key === item.key ? item : t));
@@ -291,9 +396,10 @@ export const App: React.FC = () => {
     try {
       const res = await fetch('/api/translations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(item)
       });
+      if (res.status === 401) return handleUnauthorized();
       const data = await res.json();
       if (data.success) {
         setTranslations(prev => [item, ...prev]);
@@ -314,8 +420,13 @@ export const App: React.FC = () => {
     try {
       const res = await fetch('/api/media/upload', {
         method: 'POST',
+        headers: getAuthHeaders(),
         body: formData
       });
+      if (res.status === 401) {
+        handleUnauthorized();
+        return false;
+      }
       const data = await res.json();
       if (data.success && data.data) {
         setMedia(prev => [data.data, ...prev]);
@@ -333,7 +444,11 @@ export const App: React.FC = () => {
 
   const handleDeleteMedia = async (id: string) => {
     try {
-      const res = await fetch(`/api/media/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/media/${id}`, { 
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      if (res.status === 401) return handleUnauthorized();
       const data = await res.json();
       if (data.success) {
         setMedia(prev => prev.filter(m => m.id !== id));
@@ -348,7 +463,7 @@ export const App: React.FC = () => {
     try {
       const res = await fetch('/api/records', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           title,
           source: 'Octotech Admin Core',
@@ -356,6 +471,7 @@ export const App: React.FC = () => {
           status: 'published'
         })
       });
+      if (res.status === 401) return handleUnauthorized();
       const data = await res.json();
       if (data.success && data.data) {
         setRecords(prev => [data.data, ...prev]);
@@ -370,9 +486,10 @@ export const App: React.FC = () => {
     try {
       const res = await fetch('/api/site', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(newSite)
       });
+      if (res.status === 401) return handleUnauthorized();
       const data = await res.json();
       if (data.success) {
         setSiteConfig(data.data);
@@ -387,9 +504,10 @@ export const App: React.FC = () => {
     try {
       const res = await fetch('/api/settings/upload', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(newMulter)
       });
+      if (res.status === 401) return handleUnauthorized();
       const data = await res.json();
       if (data.success) {
         setMulterConfig(data.data);
@@ -408,6 +526,30 @@ export const App: React.FC = () => {
     showToast(`Xoş gəldiniz! "${result.site?.name || 'Octotech'}" sistemi aktivləşdirildi.`);
   };
 
+  // 1. Loading state while verifying JWT session
+  if (authChecking) {
+    return (
+      <div 
+        className="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center text-white space-y-3 select-none"
+        style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}
+      >
+        <div className="w-6 h-6 border-2 border-white border-t-transparent animate-spin" />
+        <span className="text-xs font-mono text-slate-400">Sessiya yoxlanılır...</span>
+      </div>
+    );
+  }
+
+  // 2. Fullscreen Login: 100% Non-Bypassable
+  // When unauthenticated, the application tree and data views are completely unmounted
+  if (!token) {
+    return (
+      <FullscreenLogin 
+        onLoginSuccess={handleLoginSuccess}
+        uiLang={uiLang}
+      />
+    );
+  }
+
   const currentTab = tabs.find(t => t.id === activeTabId);
 
   return (
@@ -422,9 +564,9 @@ export const App: React.FC = () => {
         uiLang={uiLang}
         adminName={adminUser.fullName || 'Admin'}
         adminEmail={adminUser.email}
+        sessionRemainingSeconds={sessionRemaining}
         onLogout={() => {
-          setIsLocked(true);
-          showToast('Sessiya təhlükəsiz şəkildə sonlandırıldı');
+          handleLogout('Sessiya təhlükəsiz şəkildə sonlandırıldı');
         }}
       />
 
@@ -599,72 +741,6 @@ export const App: React.FC = () => {
             className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[100000] bg-slate-900 text-white text-xs font-medium px-4 py-2 rounded-xl shadow-lg border border-slate-800"
           >
             {toastMessage}
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {/* Session Lock Screen Modal: SF Pro Flat */}
-      <AnimatePresence>
-        {isLocked && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999999] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 select-none"
-          >
-            <motion.div
-              initial={{ scale: 0.96, y: 10 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.96, y: 10 }}
-              className="bg-white dark:bg-slate-900 p-8 max-w-sm w-full border border-slate-300 dark:border-slate-800 shadow-2xl space-y-5 text-center"
-            >
-              <div 
-                className="circle-pfp w-20 h-20 mx-auto flex items-center justify-center font-bold text-2xl select-none border-2 shadow-sm"
-                style={{
-                  backgroundColor: 'var(--theme-surface-subtle)',
-                  color: 'var(--theme-accent)',
-                  borderColor: 'var(--theme-border)'
-                }}
-              >
-                <span>{adminUser?.fullName ? adminUser.fullName.slice(0, 2).toUpperCase() : 'AD'}</span>
-              </div>
-
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {adminUser?.fullName || 'Super Admin'}
-                </h3>
-                <p className="text-xs text-slate-500 font-mono mt-0.5">
-                  {adminUser?.email || 'admin@octotech.az'}
-                </p>
-                <div className="inline-block mt-2 px-2.5 py-0.5 rounded-none text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
-                  Sessiya mühafizəsi aktivdir
-                </div>
-              </div>
-
-              <form 
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setIsLocked(false);
-                  setLockPassword('');
-                  showToast('Sessiya bərpa edildi. Xoş gəldiniz!');
-                }}
-                className="space-y-3 pt-1"
-              >
-                <input
-                  type="password"
-                  placeholder="Sessiya şifrəsi (istənilən)..."
-                  value={lockPassword}
-                  onChange={(e) => setLockPassword(e.target.value)}
-                  className="w-full h-9 px-3 text-xs border border-slate-300 dark:border-slate-700 rounded-none bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white"
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  className="w-full h-9 bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-900 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer"
-                >
-                  Sessiyanı Bərpa Et
-                </button>
-              </form>
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -25,6 +25,7 @@ interface SidebarProps {
   adminName?: string;
   adminEmail?: string;
   onLogout?: () => void;
+  sessionRemainingSeconds?: number;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -36,12 +37,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
   uiLang,
   adminName = 'Admin',
   adminEmail,
-  onLogout
+  onLogout,
+  sessionRemainingSeconds = 600
 }) => {
   const t = DICTIONARIES[uiLang] || DICTIONARIES.az;
 
-  // Real-time Session Duration Countdown (e.g. 59:45 remaining)
-  const [sessionSeconds, setSessionSeconds] = useState<number>(3540);
+  // Real-time Session Duration Countdown (exact 10 minutes = 600s)
+  const [sessionSeconds, setSessionSeconds] = useState<number>(sessionRemainingSeconds);
+
+  useEffect(() => {
+    if (sessionRemainingSeconds !== undefined) {
+      setSessionSeconds(sessionRemainingSeconds);
+    }
+  }, [sessionRemainingSeconds]);
 
   useEffect(() => {
     const timer = setInterval(() => {

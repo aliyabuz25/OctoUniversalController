@@ -94,6 +94,14 @@
   ],
   "records": [
     {
+      "title": "Test Authenticated",
+      "source": "Direct API",
+      "author": "Admin",
+      "date": "İndi",
+      "status": "published",
+      "id": "REC-5005"
+    },
+    {
       "title": "Stabilizasiya Test Qeydi",
       "source": "Direct API",
       "author": "Admin",
@@ -141,10 +149,11 @@
     "uploadDir": "uploads"
   },
   "admin": {
+    "username": "admin",
     "fullName": "Ali Yabuz",
     "email": "aliyabuz@site.com",
     "role": "Super Admin (Tam Səlahiyyət)",
-    "password": "12345678"
+    "password": "admin"
   },
   "setup": {
     "completed": true,

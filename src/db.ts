@@ -63,6 +63,7 @@ export interface MediaItem {
 }
 
 export interface AdminUser {
+  username?: string;
   fullName: string;
   email: string;
   role: string;
@@ -272,11 +273,16 @@ export class Database {
 
   public static getAdmin(): AdminUser {
     const data = this.readData();
-    return data.admin || {
+    const admin = data.admin || {
+      username: 'admin',
       fullName: 'Super Admin',
-      email: 'admin@nexus.az',
-      role: 'Baş İnzibatçı'
+      email: 'admin@octotech.az',
+      role: 'Baş İnzibatçı',
+      password: 'admin'
     };
+    if (!admin.username) admin.username = 'admin';
+    if (!admin.password) admin.password = 'admin';
+    return admin;
   }
 
   public static updateAdmin(update: Partial<AdminUser>): AdminUser {

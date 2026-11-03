@@ -64,6 +64,7 @@ export interface MulterConfig {
 }
 
 export interface AdminUser {
+  username?: string;
   fullName: string;
   email: string;
   role: string;
